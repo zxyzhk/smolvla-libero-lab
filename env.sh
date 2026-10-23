@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# Source this file from the project root before running the experiment scripts.
+export PROJECT_ROOT=${PROJECT_ROOT:-/root/autodl-tmp/smolvla_lab}
+export PATH="$PROJECT_ROOT/.venv/bin:$PATH"
+export HF_HOME="$PROJECT_ROOT/cache/huggingface"
+export HF_LEROBOT_HOME="$PROJECT_ROOT/cache/lerobot"
+export HF_ENDPOINT=${HF_ENDPOINT:-https://hf-mirror.com}
+export HF_HUB_DISABLE_XET=1
+export HF_HUB_DISABLE_TELEMETRY=1
+export HF_HUB_DOWNLOAD_TIMEOUT=120
+export HF_HUB_ETAG_TIMEOUT=30
+export MUJOCO_GL=egl
+export PYOPENGL_PLATFORM=egl
+export TOKENIZERS_PARALLELISM=false
+export OMP_NUM_THREADS=4
+export OPENBLAS_NUM_THREADS=4
+export MKL_NUM_THREADS=4
+export WANDB_MODE=disabled
+export PYTHONUNBUFFERED=1
+export MPLBACKEND=Agg
+export LIBERO_CONFIG_PATH="$PROJECT_ROOT/cache/libero_config"

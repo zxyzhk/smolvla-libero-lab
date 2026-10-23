@@ -1,0 +1,21 @@
+--- a/src/lerobot/envs/libero.py
++++ b/src/lerobot/envs/libero.py
+@@ -15,6 +15,7 @@
+ # limitations under the License.
+ from __future__ import annotations
+ 
++import logging
+ import os
+ import re
+ from collections import defaultdict
+@@ -342,7 +343,9 @@
+         self._env.seed(seed)
+         raw_obs = self._env.reset()
+         if self.init_states and self._init_states is not None:
+-            raw_obs = self._env.set_init_state(self._init_states[self.init_state_id % len(self._init_states)])
++            state_id = self.init_state_id % len(self._init_states)
++            logging.info("LIBERO_INIT task_id=%s initial_state_id=%s seed=%s", self.task_id, state_id, seed)
++            raw_obs = self._env.set_init_state(self._init_states[state_id])
+             self.init_state_id += self._reset_stride  # Change init_state_id when reset
+ 
+         # After reset, objects may be unstable (slightly floating, intersecting, etc.).

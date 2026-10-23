@@ -1,0 +1,21 @@
+--- a/src/lerobot/envs/libero.py
++++ b/src/lerobot/envs/libero.py
+@@ -32,7 +32,7 @@
+ 
+ from lerobot.lerobot_types import RobotObservation
+ 
+-from .utils import _LazyAsyncVectorEnv, parse_camera_names
++from .utils import _LazyAsyncVectorEnv, freeze_after_episode_end, parse_camera_names
+ 
+ 
+ def _get_suite(name: str) -> benchmark.Benchmark:
+@@ -523,7 +523,8 @@
+                 out[suite_name][tid] = lazy
+             elif is_sync:
+                 out[suite_name][tid] = gym.vector.SyncVectorEnv(
+-                    fns, autoreset_mode=gym.vector.AutoresetMode.NEXT_STEP
++                    [freeze_after_episode_end(fn) for fn in fns],
++                    autoreset_mode=gym.vector.AutoresetMode.NEXT_STEP
+                 )
+             else:
+                 out[suite_name][tid] = env_cls(fns)

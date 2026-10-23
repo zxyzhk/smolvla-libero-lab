@@ -1,0 +1,43 @@
+{
+  "experiment_id": "sampling5_baseline",
+  "hypothesis": "Fewer Euler integration steps may reduce action-chunk generation latency with an acceptable task-success tradeoff.",
+  "model_selection": "Use phase1_baseline at 5000 updates regardless of whether LoRA achieves a higher success rate.",
+  "checkpoint": "runs/phase1_baseline/checkpoints/005000/pretrained_model",
+  "reference_evaluation": "runs/phase1_baseline_eval/eval_info.json",
+  "treatment_evaluation": "runs/sampling5_baseline_eval/eval_info.json",
+  "only_intervention": {"policy.num_steps": {"reference": 10, "treatment": 5}},
+  "fixed": {
+    "chunk_size": 50,
+    "n_action_steps": 10,
+    "task_suite": "libero_spatial",
+    "task_ids": [0, 1, 2, 3, 4],
+    "episodes_per_task": 20,
+    "initial_state_ids_per_task": [0, 19],
+    "evaluation_seed": 2000,
+    "evaluation_batch_size": 4,
+    "async_envs": false,
+    "hard_reset": true,
+    "observation_size": [256, 256],
+    "control_hz": 20,
+    "evaluation_autocast": "float16",
+    "physical_gpu": 0
+  },
+  "latency_protocol": {
+    "precision": "fp16",
+    "batch_size": 1,
+    "warmup": 10,
+    "measurements_per_setting": 50,
+    "orders": [[10, 5], [5, 10]],
+    "scope": "Same held-out observation, model action-chunk generation only, with CUDA synchronization. Excludes preprocessing, simulation, rendering, and action postprocessing.",
+    "summary": "Median of the two order-specific median measurements for each sampling setting. Preserve every raw measurement."
+  },
+  "descriptive_acceptance_rules": {
+    "minimum_reference_success_percent_for_retention_claim": 20,
+    "minimum_median_latency_reduction_percent": 20,
+    "maximum_overall_success_drop_percentage_points": 5,
+    "maximum_per_task_success_drop_percentage_points": 10,
+    "disclosure": "Publish both settings even when these criteria fail. This is an engineering screen, not a statistical noninferiority claim."
+  },
+  "scope": "Controlled inference-setting ablation of an existing open-source sampler; no claim of an original algorithm.",
+  "outcome_policy": "Do not scan more step counts to select a favorable result. If baseline success is low, investigate policy/data/interface failures before discussing lossless acceleration."
+}
