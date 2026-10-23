@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="SmolVLA 机器人操作项目：可复现的训练、闭环评测、失败分析与原始证据。">
+  <title>SmolVLA · 完整实验记录</title>
+  <link rel="stylesheet" href="technical.css">
+  <script src="technical.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#overview" aria-label="Smol Lab 项目概览"><span class="brand-mark" aria-hidden="true">S<span></span></span><span>SMOL<span class="brand-light"> / LAB</span></span></a>
+      <nav class="site-nav" aria-label="主导航"><a href="index.html">返回项目主页</a>
+        <a href="#experiments">实验结果</a><a href="#demos">操作演示</a><a href="#method">实验方法</a><a href="#findings">结论与证据</a>
+      </nav>
+      <a id="header-repository" class="repository-link" hidden>GitHub <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="main" aria-busy="true">
+    <div id="load-error" class="container load-error" role="alert" hidden></div>
+    <section id="overview" class="container hero" aria-labelledby="project-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="small-line" aria-hidden="true"></span> ROBOT LEARNING · EXPERIMENT NOTE</p>
+        <h1 id="project-title">SmolVLA<br><span>机器人操作实验</span></h1>
+        <p id="project-subtitle" class="hero-description">从示范数据、策略微调到闭环评测，记录每一步可复现的实验与证据。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#experiments">查看实验结果 <span aria-hidden="true">↓</span></a>
+          <a id="hero-repository" class="button button-quiet" hidden>代码与复现 <span aria-hidden="true">↗</span></a>
+        </div>
+        <div class="live-line"><span id="project-status" class="status-pill" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="status-label">正在读取实验记录</span></span><span id="updated-at" class="updated-at"></span></div>
+      </div>
+      <figure class="hero-media">
+        <div class="media-topline"><span id="hero-media-label">数据样例</span><span class="media-index" aria-hidden="true">OBSERVATION → ACTION</span></div>
+        <div id="hero-visual" class="hero-visual"><img src="assets/sample_cameras.png" alt="机器人轨迹中的主视角与腕部相机样例" id="initial-camera-sample"><div class="media-placeholder" hidden><span class="placeholder-frame" aria-hidden="true">＋</span><p>真实实验画面待生成</p><span>结果随实验记录更新</span></div></div>
+        <figcaption id="hero-caption">主视角与腕部视角，来自轨迹数据中的同一时刻。</figcaption>
+      </figure>
+    </section>
+
+    <div class="container protocol-strip" aria-label="实验规模">
+      <div><span class="stat-label">任务范围</span><p id="stat-tasks">—<small>待记录</small></p></div>
+      <div><span class="stat-label">训练 / 留出轨迹</span><p id="stat-episodes">—<small>待记录</small></p></div>
+      <div><span class="stat-label">训练帧</span><p id="stat-frames">—<small>待记录</small></p></div>
+      <div><span class="stat-label">训练随机种子</span><p id="stat-seed">—<small>待记录</small></p></div>
+    </div>
+
+    <section id="experiments" class="container section" aria-labelledby="experiments-title">
+      <div class="section-heading"><div><p class="eyebrow">01 / EXPERIMENTS</p><h2 id="experiments-title">训练成本与任务表现</h2><p class="section-description">把模型适配的成本，与机器人真正完成任务的表现放在一起看。</p></div><div class="result-actions"><label class="select-label" for="experiment-scope">记录范围<select id="experiment-scope"><option value="formal">正式实验</option><option value="all">全部记录，含流程检查</option></select></label><button id="refresh-results" class="icon-button" type="button" aria-label="刷新实验记录"><span aria-hidden="true">↻</span><span>刷新</span></button></div></div>
+      <div id="comparison-empty" class="empty-state" hidden><p>正式实验结果待完成</p><span>可以切换到“全部记录”，查看已经生成的流程检查。</span></div>
+      <div id="comparison-content">
+        <div class="table-scroll" role="region" aria-label="训练与闭环评测对照表，可横向滚动" tabindex="0"><table class="comparison-table"><thead><tr><th scope="col">实验方案</th><th scope="col">更新步数</th><th scope="col">可训练参数</th><th scope="col">记录显存</th><th scope="col">训练耗时</th><th scope="col">闭环成功率</th></tr></thead><tbody id="comparison-body"></tbody></table></div>
+        <div class="results-bottom"><div><p class="measurement-note">记录显存为已保存日志中的分配显存最大值。成功率以闭环评测为准；缺失值不等同于零。</p><ul id="experiment-notes" class="note-list"></ul></div><div id="success-chart" class="success-chart" aria-label="闭环成功率对照"></div></div>
+        <div id="latency-panel" class="latency-panel" hidden><div><h3>推理采样与时延</h3><p class="measurement-note">展示已记录的模型推理耗时，中位数与P95以毫秒计。</p></div><div id="latency-chart" class="latency-chart" aria-label="推理时延对照"></div></div>
+        <details id="task-detail" class="task-detail"><summary>查看逐任务评测 <span aria-hidden="true">＋</span></summary><div id="task-results"></div></details>
+      </div>
+      <p id="comparison-notice" class="scope-notice" hidden>流程检查用于确认训练与评测链路可运行，不作为模型能力或方法优劣的结论。</p>
+      <figure id="training-curve" class="training-curve" hidden aria-labelledby="training-curve-title">
+        <div class="training-curve-heading"><h3 id="training-curve-title">训练损失记录</h3><a id="training-curve-original" class="text-link" hidden>查看原图 ↗</a></div>
+        <img id="training-curve-image" alt="由真实训练日志生成的训练损失曲线" loading="lazy" decoding="async">
+        <figcaption>训练 loss 不等于任务成功率；闭环表现以独立评测回合的结果为准。</figcaption>
+      </figure>
+    </section>
+
+    <section id="demos" class="demo-section" aria-labelledby="demos-title"><div class="container section">
+      <div class="section-heading"><div><p class="eyebrow">02 / IN THE LOOP</p><h2 id="demos-title">看动作，也看失败</h2><p class="section-description">保留真实回合。成功与失败，都是理解策略能力边界的证据。</p></div><span id="video-count" class="quiet-label" aria-live="polite">视频记录待生成</span></div>
+      <div class="filters" aria-label="筛选实验视频"><label for="video-method">实验方案<select id="video-method"><option value="all">全部方案</option></select></label><label for="video-task">任务<select id="video-task"><option value="all">全部任务</option></select></label><label for="video-outcome">结果<select id="video-outcome"><option value="all">全部结果</option><option value="success">成功回合</option><option value="failed">失败回合</option><option value="unknown">未标注</option></select></label><button id="reset-filters" class="text-button" type="button">重置筛选</button></div>
+      <div id="video-grid" class="video-grid"></div><div id="video-empty" class="empty-state"><p>闭环视频待生成</p><span>有可用视频后，会与实验方案、任务和结果一起出现在这里。</span></div><div id="video-pagination" class="video-pagination" hidden><p id="video-pagination-note" aria-live="polite"></p><button id="load-more-videos" class="button button-outline" type="button">加载更多回合 <span aria-hidden="true">＋</span></button></div>
+    </div></section>
+
+    <section id="method" class="container section" aria-labelledby="method-title">
+      <div class="section-heading"><div><p class="eyebrow">03 / REPRODUCIBLE BY DESIGN</p><h2 id="method-title">从输入到反馈</h2><p class="section-description">固定比较协议，逐项改变变量，让每个观察都能追溯到具体设置。</p></div></div>
+      <div class="pipeline" aria-label="机器人操作策略流程"><div><span>01</span><strong>图像 · 指令 · 状态</strong><small>轨迹数据与观测</small></div><span class="pipeline-arrow" aria-hidden="true">→</span><div><span>02</span><strong>SmolVLA</strong><small>策略适配与动作生成</small></div><span class="pipeline-arrow" aria-hidden="true">→</span><div><span>03</span><strong>动作序列</strong><small>执行后重新观察</small></div><span class="pipeline-arrow" aria-hidden="true">↺</span><div><span>04</span><strong>仿真闭环</strong><small>成功判定与失败分析</small></div></div>
+      <div class="method-layout"><aside class="protocol-panel"><p class="eyebrow">COMPARISON PROTOCOL</p><h3>比较的共同基础</h3><dl id="protocol-details"></dl><ul id="protocol-notes" class="note-list"></ul></aside><div><h3 class="ablation-heading">问题与对照实验</h3><div id="ablation-list" class="ablation-list"></div><div id="ablation-empty" class="subtle-empty">对照实验记录待补充。</div></div></div>
+    </section>
+
+    <section id="findings" class="findings-section" aria-labelledby="findings-title"><div class="container section">
+      <div class="section-heading"><div><p class="eyebrow">04 / FINDINGS & EVIDENCE</p><h2 id="findings-title">结论需要证据，也需要范围</h2></div><button id="show-failures" type="button" class="button button-outline" disabled>查看失败回合 <span aria-hidden="true">↗</span></button></div>
+      <div class="findings-grid"><div class="conclusions"><h3>当前观察</h3><ol id="conclusions-list"></ol><p id="conclusions-empty" class="subtle-empty">实验观察将在结果复核后补充。</p></div><aside class="limitations"><h3>适用范围与限制</h3><ul id="limitations-list"></ul><p id="limitations-empty" class="subtle-empty">范围说明待补充。</p></aside></div>
+      <div id="failure-cases" class="failure-cases" hidden aria-labelledby="failure-cases-title"><div class="failure-cases-heading"><h3 id="failure-cases-title">从失败回合提出可验证的问题</h3><p>区分画面中直接可见的观察与仍需实验验证的解释。点击画面可查看完整原图。</p></div><div id="failure-case-list" class="failure-case-list"></div></div>
+      <div class="evidence-heading"><h3>回到原始记录</h3><a id="raw-results" class="text-link" href="data/results.json" download hidden>下载结果 JSON <span aria-hidden="true">↓</span></a></div><div id="evidence-list" class="evidence-list"></div><p id="evidence-empty" class="subtle-empty">可下载的实验记录待补充。</p>
+    </div></section>
+  </main>
+  <footer class="container site-footer"><span>SMOL / LAB</span><p>所有数值来自保存的实验记录。缺失数据不作推测。</p><a href="#overview">回到顶部 ↑</a></footer>
+  <noscript><p class="container load-error">启用 JavaScript 后可查看实验记录、对照结果和视频筛选。</p></noscript>
+</body>
+</html>

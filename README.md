@@ -2,7 +2,9 @@
 
 机器人操作策略适配、闭环评测与采样计算权衡。基于开源SmolVLA，在固定LIBERO-Spatial五任务上完成默认动作专家和LoRA微调，并用相同权重、初值与seed评估10→5步采样。
 
-**[在线展示与300回合视频](https://zxyzhk.github.io/smolvla-libero-lab/)** · [完整报告](EXPERIMENT_REPORT.md) · [复现步骤](RUNBOOK.md) · [简历条目](RESUME.md) · [面试精读](INTERVIEW_GUIDE.md)
+**[视频与成果展示](https://zxyzhk.github.io/smolvla-libero-lab/)** · [300回合完整评测](https://zxyzhk.github.io/smolvla-libero-lab/technical.html) · [完整报告](EXPERIMENT_REPORT.md) · [简历条目](RESUME.md) · [面试精读](INTERVIEW_GUIDE.md)
+
+主页按“同场景仿真视频 → 核心结果 → 技术贡献”展示；逐任务表、完整图库、训练曲线与证据保留在二级页。
 
 ## 实测结果
 

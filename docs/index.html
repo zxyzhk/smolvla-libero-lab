@@ -3,88 +3,98 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="color-scheme" content="light">
-  <meta name="description" content="SmolVLA 机器人操作项目：可复现的训练、闭环评测、失败分析与原始证据。">
-  <title>SmolVLA · 机器人操作实验</title>
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="SmolVLA机器人操作项目：通过受控采样优化，将模型动作生成中位时延降低42.5%，固定100回合评测均为76%成功率。包含真实仿真视频、技术贡献和开源代码。">
+  <meta property="og:title" content="SmolVLA｜机器人操作策略适配与推理优化">
+  <meta property="og:description" content="42.5%更低的动作生成时延 · 76/100仿真成功 · 300个完整回合。">
+  <meta property="og:type" content="website">
+  <title>SmolVLA｜机器人操作策略适配与推理优化</title>
   <link rel="stylesheet" href="style.css">
   <script src="app.js" defer></script>
 </head>
 <body>
-  <a class="skip-link" href="#main">跳到正文</a>
+  <a class="skip" href="#main">跳到正文</a>
   <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#overview" aria-label="Smol Lab 项目概览"><span class="brand-mark" aria-hidden="true">S<span></span></span><span>SMOL<span class="brand-light"> / LAB</span></span></a>
-      <nav class="site-nav" aria-label="主导航">
-        <a href="#experiments">实验结果</a><a href="#demos">操作演示</a><a href="#method">实验方法</a><a href="#findings">结论与证据</a>
-      </nav>
-      <a id="header-repository" class="repository-link" hidden>GitHub <span aria-hidden="true">↗</span></a>
+    <div class="container nav-row">
+      <a class="brand" href="#main"><span class="brand-symbol" aria-hidden="true">V</span> SmolVLA <span class="brand-separator">/</span> Robotics</a>
+      <nav aria-label="项目导航"><a href="#demo">仿真演示</a><a href="#results">实验结果</a><a href="#contributions">技术贡献</a></nav>
+      <a class="nav-code" href="https://github.com/zxyzhk/smolvla-libero-lab" target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span></a>
     </div>
   </header>
-
-  <main id="main" aria-busy="true">
-    <div id="load-error" class="container load-error" role="alert" hidden></div>
-    <section id="overview" class="container hero" aria-labelledby="project-title">
-      <div class="hero-copy">
-        <p class="eyebrow"><span class="small-line" aria-hidden="true"></span> ROBOT LEARNING · EXPERIMENT NOTE</p>
-        <h1 id="project-title">SmolVLA<br><span>机器人操作实验</span></h1>
-        <p id="project-subtitle" class="hero-description">从示范数据、策略微调到闭环评测，记录每一步可复现的实验与证据。</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="#experiments">查看实验结果 <span aria-hidden="true">↓</span></a>
-          <a id="hero-repository" class="button button-quiet" hidden>代码与复现 <span aria-hidden="true">↗</span></a>
+  <main id="main">
+    <section class="container hero" aria-labelledby="project-title">
+      <p class="eyebrow"><span aria-hidden="true"></span> VISION · LANGUAGE · ACTION</p>
+      <h1 id="project-title">SmolVLA：<span>高效机器人操作</span></h1>
+      <p class="hero-description">同一权重，动作生成时延<strong id="lead-reduction">降低 42.5%</strong>；固定 100 回合成功率<strong id="lead-success">76% → 76%</strong>。</p>
+      <p class="author-line">厦门大学 · 硕士一年级 <span aria-hidden="true">/</span> 具身智能算法项目</p>
+      <div class="hero-links">
+        <a class="button primary" href="https://github.com/zxyzhk/smolvla-libero-lab" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 7 3 12l5 5m8-10 5 5-5 5M14 4l-4 16"/></svg>开源代码</a>
+        <a class="button secondary" href="https://github.com/zxyzhk/smolvla-libero-lab/blob/main/EXPERIMENT_REPORT.md" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6v18h12V7l-4-4Zm0 0v5h5M9 12h6m-6 4h6"/></svg>技术报告</a>
+        <a class="button text-button" href="technical.html">完整评测 <span aria-hidden="true">↗</span></a>
+      </div>
+      <div class="teaser" id="demo">
+        <div class="teaser-heading"><div><span class="mini-label">SAME SCENE. SAME CHECKPOINT.</span><h2>同一场景，更少采样，完成同一任务。</h2></div><button id="replay-pair" type="button" class="replay-button"><span aria-hidden="true">↻</span> 同步重播</button></div>
+        <div class="comparison-videos">
+          <figure class="video-panel">
+            <div class="video-top"><span>10 步采样 · 原设置</span><span class="timing"><b id="before-video-ms">350.0</b> ms<span>/动作块</span></span></div>
+            <video id="video-before" controls muted loop playsinline preload="metadata" data-autoplay poster="assets/videos/phase1_baseline/task4_episode00.jpg" aria-label="十步采样，机械臂将抽屉内的碗放到盘上，成功回合"><source src="assets/videos/phase1_baseline/task4_episode00.mp4" type="video/mp4"></video>
+            <figcaption><span class="success-dot" aria-hidden="true"></span> 任务完成 <span>抽屉取碗 → 放到盘上</span></figcaption>
+          </figure>
+          <figure class="video-panel optimized">
+            <div class="video-top"><span>5 步采样 · 优化设置</span><span class="timing"><b id="after-video-ms">201.2</b> ms<span>/动作块</span></span></div>
+            <video id="video-after" controls muted loop playsinline preload="metadata" data-autoplay poster="assets/videos/sampling5_baseline/task4_episode00.jpg" aria-label="五步采样，机械臂将抽屉内的碗放到盘上，成功回合"><source src="assets/videos/sampling5_baseline/task4_episode00.mp4" type="video/mp4"></video>
+            <figcaption><span class="success-dot" aria-hidden="true"></span> 任务完成 <span>同一权重 · 同一初始场景</span></figcaption>
+          </figure>
         </div>
-        <div class="live-line"><span id="project-status" class="status-pill" role="status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="status-label">正在读取实验记录</span></span><span id="updated-at" class="updated-at"></span></div>
+        <p class="video-note">真实仿真回合，均按 20 Hz 控制时间播放；上方时延来自独立模型测速，视频播放速度不代表完整系统响应速度。</p>
       </div>
-      <figure class="hero-media">
-        <div class="media-topline"><span id="hero-media-label">数据样例</span><span class="media-index" aria-hidden="true">OBSERVATION → ACTION</span></div>
-        <div id="hero-visual" class="hero-visual"><img src="assets/sample_cameras.png" alt="机器人轨迹中的主视角与腕部相机样例" id="initial-camera-sample"><div class="media-placeholder" hidden><span class="placeholder-frame" aria-hidden="true">＋</span><p>真实实验画面待生成</p><span>结果随实验记录更新</span></div></div>
-        <figcaption id="hero-caption">主视角与腕部视角，来自轨迹数据中的同一时刻。</figcaption>
-      </figure>
-    </section>
-
-    <div class="container protocol-strip" aria-label="实验规模">
-      <div><span class="stat-label">任务范围</span><p id="stat-tasks">—<small>待记录</small></p></div>
-      <div><span class="stat-label">训练 / 留出轨迹</span><p id="stat-episodes">—<small>待记录</small></p></div>
-      <div><span class="stat-label">训练帧</span><p id="stat-frames">—<small>待记录</small></p></div>
-      <div><span class="stat-label">训练随机种子</span><p id="stat-seed">—<small>待记录</small></p></div>
-    </div>
-
-    <section id="experiments" class="container section" aria-labelledby="experiments-title">
-      <div class="section-heading"><div><p class="eyebrow">01 / EXPERIMENTS</p><h2 id="experiments-title">训练成本与任务表现</h2><p class="section-description">把模型适配的成本，与机器人真正完成任务的表现放在一起看。</p></div><div class="result-actions"><label class="select-label" for="experiment-scope">记录范围<select id="experiment-scope"><option value="formal">正式实验</option><option value="all">全部记录，含流程检查</option></select></label><button id="refresh-results" class="icon-button" type="button" aria-label="刷新实验记录"><span aria-hidden="true">↻</span><span>刷新</span></button></div></div>
-      <div id="comparison-empty" class="empty-state" hidden><p>正式实验结果待完成</p><span>可以切换到“全部记录”，查看已经生成的流程检查。</span></div>
-      <div id="comparison-content">
-        <div class="table-scroll" role="region" aria-label="训练与闭环评测对照表，可横向滚动" tabindex="0"><table class="comparison-table"><thead><tr><th scope="col">实验方案</th><th scope="col">更新步数</th><th scope="col">可训练参数</th><th scope="col">记录显存</th><th scope="col">训练耗时</th><th scope="col">闭环成功率</th></tr></thead><tbody id="comparison-body"></tbody></table></div>
-        <div class="results-bottom"><div><p class="measurement-note">记录显存为已保存日志中的分配显存最大值。成功率以闭环评测为准；缺失值不等同于零。</p><ul id="experiment-notes" class="note-list"></ul></div><div id="success-chart" class="success-chart" aria-label="闭环成功率对照"></div></div>
-        <div id="latency-panel" class="latency-panel" hidden><div><h3>推理采样与时延</h3><p class="measurement-note">展示已记录的模型推理耗时，中位数与P95以毫秒计。</p></div><div id="latency-chart" class="latency-chart" aria-label="推理时延对照"></div></div>
-        <details id="task-detail" class="task-detail"><summary>查看逐任务评测 <span aria-hidden="true">＋</span></summary><div id="task-results"></div></details>
+      <div class="headline-metrics" aria-label="核心成果">
+        <div><span class="metric-label">动作生成中位时延</span><p><strong id="headline-reduction">−42.5%</strong><span id="headline-latency-pair">350.0 → 201.2 ms</span></p></div>
+        <div><span class="metric-label">同权重两种设置的成功率</span><p><strong id="headline-success">76/100</strong><span id="headline-success-caption">10 步与 5 步均为 76%</span></p></div>
+        <div><span class="metric-label">完整闭环验证</span><p><strong id="headline-episodes">300</strong><span>回合视频与逐回合指标</span></p></div>
       </div>
-      <p id="comparison-notice" class="scope-notice" hidden>流程检查用于确认训练与评测链路可运行，不作为模型能力或方法优劣的结论。</p>
-      <figure id="training-curve" class="training-curve" hidden aria-labelledby="training-curve-title">
-        <div class="training-curve-heading"><h3 id="training-curve-title">训练损失记录</h3><a id="training-curve-original" class="text-link" hidden>查看原图 ↗</a></div>
-        <img id="training-curve-image" alt="由真实训练日志生成的训练损失曲线" loading="lazy" decoding="async">
-        <figcaption>训练 loss 不等于任务成功率；闭环表现以独立评测回合的结果为准。</figcaption>
-      </figure>
+      <p class="scope-line">LIBERO-Spatial 固定 5 任务 · 单训练种子 · RTX 4090 · FP16 模型测速</p>
+      <p id="data-message" class="data-message" role="status" hidden></p>
     </section>
 
-    <section id="demos" class="demo-section" aria-labelledby="demos-title"><div class="container section">
-      <div class="section-heading"><div><p class="eyebrow">02 / IN THE LOOP</p><h2 id="demos-title">看动作，也看失败</h2><p class="section-description">保留真实回合。成功与失败，都是理解策略能力边界的证据。</p></div><span id="video-count" class="quiet-label" aria-live="polite">视频记录待生成</span></div>
-      <div class="filters" aria-label="筛选实验视频"><label for="video-method">实验方案<select id="video-method"><option value="all">全部方案</option></select></label><label for="video-task">任务<select id="video-task"><option value="all">全部任务</option></select></label><label for="video-outcome">结果<select id="video-outcome"><option value="all">全部结果</option><option value="success">成功回合</option><option value="failed">失败回合</option><option value="unknown">未标注</option></select></label><button id="reset-filters" class="text-button" type="button">重置筛选</button></div>
-      <div id="video-grid" class="video-grid"></div><div id="video-empty" class="empty-state"><p>闭环视频待生成</p><span>有可用视频后，会与实验方案、任务和结果一起出现在这里。</span></div><div id="video-pagination" class="video-pagination" hidden><p id="video-pagination-note" aria-live="polite"></p><button id="load-more-videos" class="button button-outline" type="button">加载更多回合 <span aria-hidden="true">＋</span></button></div>
-    </div></section>
-
-    <section id="method" class="container section" aria-labelledby="method-title">
-      <div class="section-heading"><div><p class="eyebrow">03 / REPRODUCIBLE BY DESIGN</p><h2 id="method-title">从输入到反馈</h2><p class="section-description">固定比较协议，逐项改变变量，让每个观察都能追溯到具体设置。</p></div></div>
-      <div class="pipeline" aria-label="机器人操作策略流程"><div><span>01</span><strong>图像 · 指令 · 状态</strong><small>轨迹数据与观测</small></div><span class="pipeline-arrow" aria-hidden="true">→</span><div><span>02</span><strong>SmolVLA</strong><small>策略适配与动作生成</small></div><span class="pipeline-arrow" aria-hidden="true">→</span><div><span>03</span><strong>动作序列</strong><small>执行后重新观察</small></div><span class="pipeline-arrow" aria-hidden="true">↺</span><div><span>04</span><strong>仿真闭环</strong><small>成功判定与失败分析</small></div></div>
-      <div class="method-layout"><aside class="protocol-panel"><p class="eyebrow">COMPARISON PROTOCOL</p><h3>比较的共同基础</h3><dl id="protocol-details"></dl><ul id="protocol-notes" class="note-list"></ul></aside><div><h3 class="ablation-heading">问题与对照实验</h3><div id="ablation-list" class="ablation-list"></div><div id="ablation-empty" class="subtle-empty">对照实验记录待补充。</div></div></div>
+    <section class="result-section" id="results" aria-labelledby="results-title">
+      <div class="container results-layout">
+        <div class="result-story"><p class="eyebrow">RESULTS</p><h2 id="results-title">减少推理计算，<br>用闭环结果检验取舍。</h2><p>动作生成要反复积分采样。保持模型权重与动作执行长度不变，仅将 Euler 积分从 10 步减到 5 步，检查提速是否伴随任务效果损失。</p><a class="text-link" href="technical.html#experiments">查看逐任务结果与置信区间 <span aria-hidden="true">↗</span></a></div>
+        <div class="result-chart" aria-label="采样步数对照结果">
+          <div class="chart-heading"><span>模型动作块生成时延 <small>越低越好</small></span><span class="chart-unit">中位数 / ms</span></div>
+          <div class="bar-row"><span>10 步</span><div class="bar-track"><div class="bar baseline" style="width:100%"></div></div><strong id="latency-before">350.0</strong></div>
+          <div class="bar-row"><span>5 步</span><div class="bar-track"><div id="optimized-bar" class="bar blue" style="width:57.5%"></div></div><strong id="latency-after">201.2</strong></div>
+          <div class="chart-outcome"><div><span>闭环任务成功率</span><p><b id="success-before">76%</b><span aria-hidden="true">→</span><b id="success-after">76%</b></p></div><span class="outline-badge">无需重新训练</span></div>
+          <p class="chart-note">相同权重、相同 100 个任务/初值组合。通过预设工程筛选；逐任务有升降，不作统计无损结论。</p>
+        </div>
+      </div>
     </section>
 
-    <section id="findings" class="findings-section" aria-labelledby="findings-title"><div class="container section">
-      <div class="section-heading"><div><p class="eyebrow">04 / FINDINGS & EVIDENCE</p><h2 id="findings-title">结论需要证据，也需要范围</h2></div><button id="show-failures" type="button" class="button button-outline" disabled>查看失败回合 <span aria-hidden="true">↗</span></button></div>
-      <div class="findings-grid"><div class="conclusions"><h3>当前观察</h3><ol id="conclusions-list"></ol><p id="conclusions-empty" class="subtle-empty">实验观察将在结果复核后补充。</p></div><aside class="limitations"><h3>适用范围与限制</h3><ul id="limitations-list"></ul><p id="limitations-empty" class="subtle-empty">范围说明待补充。</p></aside></div>
-      <div id="failure-cases" class="failure-cases" hidden aria-labelledby="failure-cases-title"><div class="failure-cases-heading"><h3 id="failure-cases-title">从失败回合提出可验证的问题</h3><p>区分画面中直接可见的观察与仍需实验验证的解释。点击画面可查看完整原图。</p></div><div id="failure-case-list" class="failure-case-list"></div></div>
-      <div class="evidence-heading"><h3>回到原始记录</h3><a id="raw-results" class="text-link" href="data/results.json" download hidden>下载结果 JSON <span aria-hidden="true">↓</span></a></div><div id="evidence-list" class="evidence-list"></div><p id="evidence-empty" class="subtle-empty">可下载的实验记录待补充。</p>
-    </div></section>
+    <section class="container section contributions" id="contributions" aria-labelledby="contributions-title">
+      <div class="section-heading"><p class="eyebrow">TECHNICAL CONTRIBUTIONS</p><h2 id="contributions-title">我解决了哪些具体问题？</h2><p>从模型适配到可信评测，把开源策略变成可运行、可比较、可解释的机器人实验。</p></div>
+      <div class="contribution-grid">
+        <article class="contribution"><span class="contribution-number">01</span><p class="problem">痛点 · 推理计算耗时</p><h3>采样步数减半，验证效率与效果</h3><p>固定最终权重与闭环执行配置，对照 10/5 步采样；统一 FP16、单卡与观测，用两种测试顺序复测时延。</p><div class="contribution-result"><strong id="contribution-reduction">42.5%</strong><span>模型中位时延下降</span></div></article>
+        <article class="contribution"><span class="contribution-number">02</span><p class="problem">痛点 · 比较起点可能不一致</p><h3>修复提前重置，让评测真正配对</h3><p>定位同步环境中早结束回合提前消耗初值的问题；冻结已结束环境，追踪实际初值，并用不同回合长度验证修复。</p><div class="contribution-result"><strong>300</strong><span>回合初值、结果与视频可追溯</span></div></article>
+        <article class="contribution"><span class="contribution-number">03</span><p class="problem">痛点 · 策略适配训练参数多</p><h3>参数高效微调，量化成本与效果</h3><p>打通双相机、状态与动作接口，对比动作专家和 LoRA。可训练参数 99.88M → 1.49M；本次成功率分别为 76% / 63%。</p><div class="contribution-result"><strong id="parameter-reduction">98.5%</strong><span>可训练参数减少，保留效果取舍</span></div></article>
+      </div>
+      <div class="stack-line"><span>TECH STACK</span><ul aria-label="项目技术栈"><li>PyTorch</li><li>SmolVLA</li><li>Flow Matching</li><li>LoRA / PEFT</li><li>LeRobot</li><li>LIBERO</li><li>MuJoCo</li></ul></div>
+    </section>
+
+    <section class="container section demos" aria-labelledby="demos-title">
+      <div class="section-heading compact-heading"><div><p class="eyebrow">POLICY IN ACTION</p><h2 id="demos-title">语言指令驱动的抓取与放置</h2></div><a class="text-link" href="technical.html#demos">全部 300 回合，含失败案例 <span aria-hidden="true">↗</span></a></div>
+      <div class="demo-grid">
+        <figure><video id="demo-spatial" controls muted loop playsinline preload="none" data-autoplay poster="assets/videos/sampling5_baseline/task0_episode00.jpg" aria-label="机械臂根据空间关系选择碗并放到盘上"><source src="assets/videos/sampling5_baseline/task0_episode00.mp4" type="video/mp4"></video><figcaption><span>01 / 空间定位</span><h3>选择盘子与小烤盅之间的碗</h3><p>根据相对位置区分目标，抓取后放到盘上。</p></figcaption></figure>
+        <figure><video id="demo-box" controls muted loop playsinline preload="none" data-autoplay poster="assets/videos/sampling5_baseline/task3_episode00.jpg" aria-label="机械臂将饼干盒上的碗取下并放到盘上"><source src="assets/videos/sampling5_baseline/task3_episode00.mp4" type="video/mp4"></video><figcaption><span>02 / 盒上取物</span><h3>将饼干盒上的碗放到盘上</h3><p>从不同高度与背景中的目标位置完成取放。</p></figcaption></figure>
+        <figure><video id="demo-drawer" controls muted loop playsinline preload="none" data-autoplay poster="assets/videos/sampling5_baseline/task4_episode04.jpg" aria-label="机械臂从已打开的顶层抽屉中取碗并放到盘上"><source src="assets/videos/sampling5_baseline/task4_episode04.mp4" type="video/mp4"></video><figcaption><span>03 / 抽屉取物</span><h3>从已打开的抽屉中取碗</h3><p>接近柜内目标，取出并移动到盘的位置。</p></figcaption></figure>
+      </div>
+      <p class="gallery-note">以上为 5 步采样的真实成功回合节选；总体结果包含全部成功与失败，不以演示片段代替评测。</p>
+    </section>
+
+    <section class="container evidence-section" aria-label="技术材料与实验口径">
+      <div class="evidence-links"><a href="https://github.com/zxyzhk/smolvla-libero-lab" target="_blank" rel="noopener noreferrer">代码仓库 <span aria-hidden="true">↗</span></a><a href="https://github.com/zxyzhk/smolvla-libero-lab/blob/main/EXPERIMENT_REPORT.md" target="_blank" rel="noopener noreferrer">实验报告 <span aria-hidden="true">↗</span></a><a href="technical.html">完整数据与失败分析 <span aria-hidden="true">↗</span></a></div>
+      <details class="protocol-details"><summary>评测口径与项目范围</summary><div><p>基于开源 SmolVLA、LeRobot 与 LIBERO 的个人工程项目。100 条训练、25 条留出轨迹；默认专家与 LoRA 各训练 5,000 步。三组配置各在 5 个固定任务中评测 100 回合，仅一个训练种子。</p><p>42.5% 指同观测、batch=1、RTX 4090 上 FP16 动作块生成中位时延降幅，包含模型内部图像准备，排除外部 processor、仿真与完整机器人墙钟响应。76%→76% 是本次固定评测结果，不证明统计无损或全新场景泛化。</p><p>LoRA 配方学习率与默认组不同，属于实用配置比较。采样减步是既有采样器的工程优化，未提出原创 VLA 架构，未进行真机部署。完整逐任务结果、Wilson 区间、原始计时与全部视频见技术材料。</p></div></details>
+    </section>
   </main>
-  <footer class="container site-footer"><span>SMOL / LAB</span><p>所有数值来自保存的实验记录。缺失数据不作推测。</p><a href="#overview">回到顶部 ↑</a></footer>
-  <noscript><p class="container load-error">启用 JavaScript 后可查看实验记录、对照结果和视频筛选。</p></noscript>
+  <footer class="container footer"><span>SmolVLA · Efficient Robot Manipulation</span><span>开源模型适配 · 仿真验证 · 2026</span><a href="https://github.com/zxyzhk/smolvla-libero-lab/blob/main/ACKNOWLEDGEMENTS.md" target="_blank" rel="noopener noreferrer">模型与基准来源 ↗</a></footer>
 </body>
 </html>
