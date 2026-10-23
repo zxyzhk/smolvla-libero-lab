@@ -1,0 +1,135 @@
+{
+  "project": {
+    "title": "SmolVLA 机器人操作实验",
+    "subtitle": "从示范数据适配、参数高效微调到闭环执行：用可复查的对照结果，评估任务表现与推理计算的权衡。",
+    "repository_url": "https://github.com/zxyzhk/smolvla-libero-lab",
+    "updated_at": "2026-10-23T00:44:00.599782+00:00"
+  },
+  "status": {
+    "label": "训练与闭环评测进行中",
+    "complete": false
+  },
+  "protocol": {
+    "tasks": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "train_episodes": 100,
+    "heldout_episodes": 25,
+    "train_frames": 11939,
+    "heldout_frames": 2962,
+    "seed": 1000,
+    "notes": [
+      "LIBERO-Spatial固定任务0–4；每任务20条训练、5条留出轨迹。",
+      "两张RTX 4090独立单卡训练；没有跨卡梯度同步。",
+      "默认组与LoRA学习率不同，是实用配方比较。",
+      "推理减步对照固定checkpoint、FP16、初始状态0–19、n_action_steps=10和seed=2000。",
+      "同步环境终止冻结修复及全部初值日志均保留；视频按20Hz仿真控制时间播放，排除推理等待。"
+    ]
+  },
+  "experiments": [
+    {
+      "id": "phase1_baseline",
+      "label": "默认动作专家 · 10步采样",
+      "kind": "formal_recipe_comparison",
+      "training": {
+        "steps": 2140,
+        "target_steps": 5000,
+        "trainable_parameters": 99880992,
+        "total_parameters": 450046176,
+        "max_logged_allocated_gib": 4.2806291580200195,
+        "wall_s": null
+      },
+      "evaluation": {
+        "per_task": []
+      },
+      "latency": [],
+      "videos": [],
+      "notes": [
+        "状态：training",
+        "训练与验证按完整轨迹划分；显存仅指已记录CUDA allocated最大值。",
+        "闭环评测FP16。时延若有记录，同为FP16、固定单观测、batch=1；P95取两种测试顺序中较大值。"
+      ]
+    },
+    {
+      "id": "phase1_lora",
+      "label": "LoRA r32 · 10步采样",
+      "kind": "formal_recipe_comparison",
+      "training": {
+        "steps": 2080,
+        "target_steps": 5000,
+        "trainable_parameters": 1485312,
+        "total_parameters": 451531488,
+        "max_logged_allocated_gib": 3.763498306274414,
+        "wall_s": null
+      },
+      "evaluation": {
+        "per_task": []
+      },
+      "latency": [],
+      "videos": [],
+      "notes": [
+        "状态：training",
+        "训练与验证按完整轨迹划分；显存仅指已记录CUDA allocated最大值。",
+        "闭环评测FP16。时延若有记录，同为FP16、固定单观测、batch=1；P95取两种测试顺序中较大值。"
+      ]
+    }
+  ],
+  "ablations": [
+    {
+      "id": "sampling_steps",
+      "label": "10 → 5步：计算节省是否值得？",
+      "status": "waiting",
+      "hypothesis": "使用同一最终基线权重，仅减少Flow Matching的Euler积分步数；同时检查100回合成功率和FP16动作生成时延。",
+      "conclusion": "等待正式闭环结果。预设筛选：中位时延至少下降20%，总成功率最多下降5个百分点、任一任务最多下降10个百分点，且基线至少20%成功。"
+    }
+  ],
+  "conclusions": [
+    "默认动作专家与LoRA各训练5000步，使用相同基础模型、100条训练轨迹和25条留出轨迹。学习率随配方变化，不能把组间差异全部归因于LoRA。",
+    "可训练参数：99,880,992 → 1,485,312，减少98.51%。这不意味着显存或推理速度等比例改善。"
+  ],
+  "limitations": [
+    "单个训练种子、固定五任务子集；不是完整LIBERO成绩，也不代表真机部署。",
+    "仿真初始状态评测可能与公开示范初值相关；本实验不证明全新场景或预训练数据无重叠。",
+    "Wilson区间对应已测回合，不能代替跨任务与训练种子的统计分析。",
+    "时延是固定单观测、batch=1的模型微基准，不包括预处理、仿真或完整机器人墙钟响应。",
+    "小trick是既有采样器的受控工程对照，未提出原创模型或采样算法。"
+  ],
+  "evidence": [
+    {
+      "label": "固定实验协议与轨迹划分",
+      "href": "data/protocol.json"
+    },
+    {
+      "label": "phase1_baseline_training.jsonl",
+      "href": "data/phase1_baseline_training.jsonl"
+    },
+    {
+      "label": "phase1_baseline_parameters.json",
+      "href": "data/phase1_baseline_parameters.json"
+    },
+    {
+      "label": "phase1_lora_training.jsonl",
+      "href": "data/phase1_lora_training.jsonl"
+    },
+    {
+      "label": "phase1_lora_parameters.json",
+      "href": "data/phase1_lora_parameters.json"
+    },
+    {
+      "label": "sampling_protocol.json",
+      "href": "data/sampling_protocol.json"
+    },
+    {
+      "label": "sampling_preregistration.json",
+      "href": "data/sampling_preregistration.json"
+    },
+    {
+      "label": "data_audit.json",
+      "href": "data/data_audit.json"
+    }
+  ]
+}
