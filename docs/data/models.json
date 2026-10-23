@@ -1,0 +1,39 @@
+{
+  "endpoint": "https://hf-mirror.com",
+  "models": {
+    "smolvla_base": {
+      "repo_id": "lerobot/smolvla_base",
+      "revision": "5e8d12a6e2975b0e5e5fce7c8caf47c371d257b6",
+      "local_path": "/root/autodl-tmp/smolvla_lab/models/smolvla_base",
+      "weights": {
+        "policy_postprocessor_step_0_unnormalizer_processor.safetensors": {
+          "size": 640,
+          "sha256": "490ab239d96e263687c0b2e386a0afbc235a2eceb9857c36ed32f2f162a3e7c8"
+        },
+        "policy_preprocessor_step_5_normalizer_processor.safetensors": {
+          "size": 640,
+          "sha256": "490ab239d96e263687c0b2e386a0afbc235a2eceb9857c36ed32f2f162a3e7c8"
+        },
+        "model.safetensors": {
+          "size": 906712520,
+          "sha256": "7cd549ac2351fb069c0ddb3c34ad2d09cfc92b56a15dccdfc2e41467aaca01eb"
+        }
+      }
+    },
+    "smolvlm": {
+      "repo_id": "HuggingFaceTB/SmolVLM2-500M-Video-Instruct",
+      "revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
+      "local_path": "/root/autodl-tmp/smolvla_lab/models/smolvlm",
+      "weights": {
+        "model.safetensors": {
+          "size": 2029990624,
+          "sha256": "b9bfd456c9472c0acd5719d6e514c4b859891af205ee1a736552fd3497b8b0c3"
+        }
+      }
+    }
+  },
+  "local_config_overrides": [
+    "config.json",
+    "policy_preprocessor.json"
+  ]
+}

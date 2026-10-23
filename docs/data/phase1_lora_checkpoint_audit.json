@@ -1,0 +1,80 @@
+{
+  "name": "phase1_lora",
+  "checkpoint": "/root/autodl-tmp/smolvla_lab/runs/phase1_lora/checkpoints/005000/pretrained_model",
+  "checks": [
+    {
+      "check": "policy_preprocessor.json: normalization modes",
+      "passed": true
+    },
+    {
+      "check": "policy_preprocessor.json: observation.state.mean",
+      "passed": true,
+      "max_absolute_error": 6.799692275905045e-08
+    },
+    {
+      "check": "policy_preprocessor.json: observation.state.std",
+      "passed": true,
+      "max_absolute_error": 1.1967780266797234e-08
+    },
+    {
+      "check": "policy_preprocessor.json: observation.state.count",
+      "passed": true,
+      "max_absolute_error": 0.0
+    },
+    {
+      "check": "policy_preprocessor.json: action.mean",
+      "passed": true,
+      "max_absolute_error": 7.151288200502037e-09
+    },
+    {
+      "check": "policy_preprocessor.json: action.std",
+      "passed": true,
+      "max_absolute_error": 2.3952504646373995e-08
+    },
+    {
+      "check": "policy_preprocessor.json: action.count",
+      "passed": true,
+      "max_absolute_error": 0.0
+    },
+    {
+      "check": "policy_postprocessor.json: normalization modes",
+      "passed": true
+    },
+    {
+      "check": "policy_postprocessor.json: observation.state.mean",
+      "passed": true,
+      "max_absolute_error": 6.799692275905045e-08
+    },
+    {
+      "check": "policy_postprocessor.json: observation.state.std",
+      "passed": true,
+      "max_absolute_error": 1.1967780266797234e-08
+    },
+    {
+      "check": "policy_postprocessor.json: observation.state.count",
+      "passed": true,
+      "max_absolute_error": 0.0
+    },
+    {
+      "check": "policy_postprocessor.json: action.mean",
+      "passed": true,
+      "max_absolute_error": 7.151288200502037e-09
+    },
+    {
+      "check": "policy_postprocessor.json: action.std",
+      "passed": true,
+      "max_absolute_error": 2.3952504646373995e-08
+    },
+    {
+      "check": "policy_postprocessor.json: action.count",
+      "passed": true,
+      "max_absolute_error": 0.0
+    },
+    {
+      "check": "LIBERO camera, state and action interface",
+      "passed": true
+    }
+  ],
+  "passed": true,
+  "scope": "Saved interfaces and normalization buffers; does not establish policy performance."
+}

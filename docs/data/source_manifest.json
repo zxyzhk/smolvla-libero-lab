@@ -1,0 +1,21 @@
+{
+  "created_at_utc": "2026-10-23T00:27:21.715104+00:00",
+  "files": {
+    ".gitignore": "7bc96370b14b38549d3b2d094ebba019f8b0297367628094abb966bb2093735f",
+    "INTERVIEW_GUIDE.md": "845c75e5a786780c06026c619892aa2952dcd3e68124ae92f8072a2170e9b3a9",
+    "README.md": "bbd40ad60a8d6e91781e456fda925b672920824114ec7353b7999407ceb55a69",
+    "bootstrap.sh": "9128f9506e1b4545736500f2cdfaf6e27e0c2bd0eb81bd746ea89fca12fff625",
+    "env.sh": "d8262d216ab8226e6d9ff4315daa1fdd5a6f34561a51e590c82315e90c53201a",
+    "scripts/audit_checkpoint.py": "0a38e029f8b3b5a27c6909b84643916a8d9f7adaeb761ec1f624e749464c9c66",
+    "scripts/benchmark_latency.py": "f758f114b36614abf9593125dff97dcfb1f5f23310c96e2d5317e30f95ed52d9",
+    "scripts/finish_phase.py": "c276c5d50063ab26ddf4a8af951fd5d9ecf64c4943588139d28779ba2d9a8b0b",
+    "scripts/launch.py": "3a1f1844c78eef380e1fc45a1b34b4255b9a3d24970ae374aa0fa3c8d5b841f2",
+    "scripts/prepare_data.py": "ec235f527b7f609aa836c0efb7eb89314806e035381a30c2162fb8e76dd0e934",
+    "scripts/prepare_models.py": "9325c9f732444fd103df9d1cf9ceecee857df77ea3e2448a45fe8a32647884af",
+    "scripts/run_experiment.py": "55cfbc11d8e5ccff41a25d67c0224e4936051909b9a475dc4c4a6f206f3c490b",
+    "scripts/setup_libero.py": "a24b695c73d1b087545fad8f2907699b6118c83cd84dd9e8a6023c3b19d9bf17",
+    "scripts/status.py": "74143ce7bbe679d48cb3a4d30389c58061c51e74d04db0a5c9c377a3b19c2743",
+    "scripts/summarize.py": "0322a6b8b82ef179498e55840f438e8de86d2cfe566f6dd0eeaef4340410fa0f",
+    "scripts/train_entry.py": "6994ac4a30d86796ebb2408807ed6d1aa7e9336a5e2202ad9d188fa46960340c"
+  }
+}

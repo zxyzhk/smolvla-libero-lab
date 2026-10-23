@@ -1,0 +1,44 @@
+{
+  "conclusions": [
+    "基线在固定五任务、100个回合中成功76次；任务1和4分别为12/20、11/20，结果仅覆盖当前任务子集与训练设置。",
+    "复核的三个失败回合中，抽样画面未见目标碗被有效转移到盘内；抓取建立、保持或反馈更新问题仅为待验证假设，不能推广为全部24个失败的分类。"
+  ],
+  "failure_cases": [
+    {
+      "id": "baseline_task0_ep2",
+      "title": "经过盘附近，碗未见随夹爪转移",
+      "experiment": "phase1_baseline",
+      "task_id": 0,
+      "episode_index": 2,
+      "image": "assets/cases/baseline_task0_ep2_sheet.jpg",
+      "video": "assets/videos/phase1_baseline/task0_episode02.mp4",
+      "observation": "指标为失败。0–14秒的抽样帧中，夹爪接近桌面碗区后经过盘附近，未见碗随之进入盘中；后续又回到碗附近。遮挡和抽样间隔使短暂夹持或滑落无法确认。",
+      "hypothesis": "可能未形成稳定抓取却继续执行向盘移动的动作，也可能存在抓取偏移或短暂接触后滑落；原因尚未证实。",
+      "next_test": "尚未执行：固定checkpoint、processor、初值和seed，保持chunk_size=50及num_steps=10，只将n_action_steps从10改为5；比较同回合行为，并记录碗/末端位姿、夹爪状态与可用接触信息，检验更频繁观测是否有帮助。"
+    },
+    {
+      "id": "baseline_task1_ep1",
+      "title": "接近源物体后移向盘，未见完成放置",
+      "experiment": "phase1_baseline",
+      "task_id": 1,
+      "episode_index": 1,
+      "image": "assets/cases/baseline_task1_ep1_sheet.jpg",
+      "video": "assets/videos/phase1_baseline/task1_episode01.mp4",
+      "observation": "指标为失败。抽样帧中夹爪靠近小烤盅旁的碗，随后移向盘；未清楚显示目标碗被带到盘内，后续源区域的碗仍可见，夹爪又返回附近。无法确认是否曾离桌或闭合命令是否正确执行。",
+      "hypothesis": "抓取建立或保持可能失败，也可能存在末端局部对齐误差；画面不能证明语言理解、夹持力度或某一模型模块是原因。",
+      "next_test": "尚未执行：固定权重、初值、seed和观测处理，保持num_steps=10，只将n_action_steps从10改为5；记录物体高度、末端与夹爪状态，检验更频繁反馈是否有助于改变未带起碗后的行为。该对照不能直接证明闭合时机或夹持保持问题。"
+    },
+    {
+      "id": "baseline_task4_ep1",
+      "title": "末端到盘附近，源碗仍在抽屉",
+      "experiment": "phase1_baseline",
+      "task_id": 4,
+      "episode_index": 1,
+      "image": "assets/cases/baseline_task4_ep1_sheet.jpg",
+      "video": "assets/videos/phase1_baseline/task4_episode01.mp4",
+      "observation": "指标为失败。起始顶层抽屉已打开；夹爪接近抽屉内碗后离开柜子并在盘附近运动，多个后续抽样帧仍可见源碗留在抽屉内，盘上未见目标碗。是否碰撞或短暂抓住后松脱无法从抽样图确定。",
+      "hypothesis": "狭窄区域中的抓取对齐、夹持保持或撤离过程可能没有完成有效取物；不能仅凭场景断言抽屉碰撞或规划失败。",
+      "next_test": "尚未执行：固定checkpoint、初值、seed及num_steps=10，仅将n_action_steps从10改为5，对比源碗位移与取物过程，记录末端/碗位姿和可用接触信息。改善也不能单独证明碰撞原因，仍需直接证据。"
+    }
+  ]
+}

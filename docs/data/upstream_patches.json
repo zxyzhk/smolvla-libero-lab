@@ -1,0 +1,18 @@
+{
+  "upstream_commit": "f9e9d739ea7055b282ea1b165e8785412a674693",
+  "patches": [
+    {
+      "path": "patches/eval_complete_videos.patch",
+      "sha256": "bdc0e941786dd768e9494ec35a532bf8ceebc8abad3b1c57dea59e0b550a5dcb"
+    },
+    {
+      "path": "patches/libero_initial_state_trace.patch",
+      "sha256": "c51cf5b3adfe24e6cc3d5b9b60e2bb1c8003ac62aac81abada075d6763b56a3c"
+    },
+    {
+      "path": "patches/libero_sync_freeze.patch",
+      "sha256": "a2f9850792fc9cb32f149946913ac18ffb2cf1339a0e847dfe456895fbbf30e2"
+    }
+  ],
+  "purpose": "Freeze completed SyncVectorEnv lanes so later LIBERO initial states are not skipped."
+}

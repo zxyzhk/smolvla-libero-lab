@@ -1,0 +1,94 @@
+{
+  "phase1_baseline": {
+    "config.json": {
+      "bytes": 2387,
+      "sha256": "8fb04d5d53b4d10723b3eef4b9c02c9bc8c33deca15454dd17708f2d0f064509"
+    },
+    "model.safetensors": {
+      "bytes": 906712552,
+      "sha256": "965025a9d034c164d73d3600b8ebc29592a887430d712d6f2c6a7f35846cf968"
+    },
+    "policy_postprocessor.json": {
+      "bytes": 660,
+      "sha256": "3b51f092c70c710ce0213ee1b63bf51b4878ec67828dd2d67daf9ef51081a41a"
+    },
+    "policy_postprocessor_step_0_unnormalizer_processor.safetensors": {
+      "bytes": 7668,
+      "sha256": "67fb21f293ad21fae9f98b269ca63ccf695aa1ef2c02d7fe6178c33356195db4"
+    },
+    "policy_preprocessor.json": {
+      "bytes": 1753,
+      "sha256": "e2fd1f7c59d367747d230b0fea60fa19f4c76c193f0e7f869fa9e11b4d5ff691"
+    },
+    "policy_preprocessor_step_5_normalizer_processor.safetensors": {
+      "bytes": 7676,
+      "sha256": "e3c18b57c3a2f6011a6e633e2f7a41c8b36a20ef82b702849d3d53d385b2a65c"
+    },
+    "tokenizer/chat_template.jinja": {
+      "bytes": 403,
+      "sha256": "830005085ddd94cec605b6e21b885b28ffad6e3f82ee6a212c523533e8f04f01"
+    },
+    "tokenizer/tokenizer.json": {
+      "bytes": 3548738,
+      "sha256": "b90474ce689a6f06dc920d3ebdb1f9cb8d3608da9e93b8b4eae63e9101bbc5d5"
+    },
+    "tokenizer/tokenizer_config.json": {
+      "bytes": 837,
+      "sha256": "49749e33ec31d7db351940933d6646bd6c7f83f4b5b43055a9215e1784b7eda0"
+    },
+    "train_config.json": {
+      "bytes": 14573,
+      "sha256": "93d5d90d51b0f19a534ebcd0a8ac56cd4edf71e78090b65453af5eaf0198e5da"
+    }
+  },
+  "phase1_lora": {
+    "README.md": {
+      "bytes": 5144,
+      "sha256": "229296c927033a53b05e80d005d3a9725f74bf273abef847793edb5aad12e2ca"
+    },
+    "adapter_config.json": {
+      "bytes": 1341,
+      "sha256": "562cf23c89f0491a9b027427c3b4ffe34742a4b6fc01e36fda3a30ffa2a93e5d"
+    },
+    "adapter_model.safetensors": {
+      "bytes": 5952536,
+      "sha256": "6c7fb6f055b09646cbbd7c11bf5006951409f90bdc72fb2caceb8cf6e5ccf76d"
+    },
+    "config.json": {
+      "bytes": 2384,
+      "sha256": "57ab4b827dd8fefdd8b7b11d57108b42dae4bb48895c64cc2cba435ce295b650"
+    },
+    "policy_postprocessor.json": {
+      "bytes": 660,
+      "sha256": "3b51f092c70c710ce0213ee1b63bf51b4878ec67828dd2d67daf9ef51081a41a"
+    },
+    "policy_postprocessor_step_0_unnormalizer_processor.safetensors": {
+      "bytes": 7668,
+      "sha256": "67fb21f293ad21fae9f98b269ca63ccf695aa1ef2c02d7fe6178c33356195db4"
+    },
+    "policy_preprocessor.json": {
+      "bytes": 1753,
+      "sha256": "e2fd1f7c59d367747d230b0fea60fa19f4c76c193f0e7f869fa9e11b4d5ff691"
+    },
+    "policy_preprocessor_step_5_normalizer_processor.safetensors": {
+      "bytes": 7676,
+      "sha256": "e3c18b57c3a2f6011a6e633e2f7a41c8b36a20ef82b702849d3d53d385b2a65c"
+    },
+    "tokenizer/chat_template.jinja": {
+      "bytes": 403,
+      "sha256": "830005085ddd94cec605b6e21b885b28ffad6e3f82ee6a212c523533e8f04f01"
+    },
+    "tokenizer/tokenizer.json": {
+      "bytes": 3548738,
+      "sha256": "b90474ce689a6f06dc920d3ebdb1f9cb8d3608da9e93b8b4eae63e9101bbc5d5"
+    },
+    "tokenizer/tokenizer_config.json": {
+      "bytes": 837,
+      "sha256": "49749e33ec31d7db351940933d6646bd6c7f83f4b5b43055a9215e1784b7eda0"
+    },
+    "train_config.json": {
+      "bytes": 14733,
+      "sha256": "97a6d6ab89e804d9275d673252ba97918950634ceb8fbaafa17ce12567e373ba"
+    }
+  }
+}

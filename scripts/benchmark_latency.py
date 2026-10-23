@@ -1,8 +1,9 @@
 #!/usr/bin/env python
-"""Benchmark trained SmolVLA/LoRA checkpoints with explicit BF16 autocast.
+"""Benchmark trained SmolVLA/LoRA checkpoints with explicit BF16 or FP16 autocast.
 
-Only action-chunk generation is timed. Preprocessing, decoding, simulation,
-rendering, and action postprocessing are excluded. Each invocation writes a new
+Only predict_action_chunk is timed, including its internal image preparation.
+External processors, decoding, simulation, rendering, and action postprocessing
+are excluded. Each invocation writes a new
 timestamped report; no existing measurements are replaced.
 """
 import argparse
@@ -202,8 +203,9 @@ def main():
             "task": sample["task"], "heldout": True,
         },
         "seed": args.seed,
-        "scope": "Single held-out observation, synchronous model action-chunk generation only; "
-                 "excludes preprocessing, decoding, simulation, rendering, postprocessing, and task success.",
+        "scope": "Single held-out observation, synchronous predict_action_chunk call including internal image "
+                 "preparation and initial noise. Excludes external policy processors/tokenization, dataset decoding, "
+                 "simulation, rendering, action postprocessing, and task success.",
         "rows": rows,
     }
     reports = root / "reports"

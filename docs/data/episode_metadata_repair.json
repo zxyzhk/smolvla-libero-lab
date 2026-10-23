@@ -1,0 +1,18 @@
+{
+  "applied": true,
+  "source_revision": "a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4",
+  "scope": "local dataset copy only",
+  "reason": "Source episode metadata is missing tasks required for task-stratified eval_split",
+  "method": "Frame episode_index/task_index joined to meta/tasks.parquet task names",
+  "repaired_episodes": 1693,
+  "files": [
+    {
+      "path": "meta/episodes/chunk-000/file-000.parquet",
+      "backup": "reports/source_episode_metadata/chunk-000/file-000.parquet",
+      "source_sha256": "324db6d3f8efbfb340177507c11bfa2e78b1753c46802b3700fa8c8b4be461db",
+      "local_sha256": "1b733246a4b1ae6eb770ab7c781fea7713da696b3500d5b4ad60a8a61c96a10b",
+      "episodes": 1693
+    }
+  ],
+  "upstream_modified": false
+}

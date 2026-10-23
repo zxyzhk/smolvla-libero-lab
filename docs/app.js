@@ -53,7 +53,7 @@
   }
 
   function kindTag(experiment) {
-    return element("span", `kind-tag${isCheck(experiment) ? " check" : ""}`, isCheck(experiment) ? "流程检查" : "正式实验");
+    return element("span", `kind-tag${isCheck(experiment) ? " check" : ""}`, isCheck(experiment) ? "流程检查" : experiment.kind === "controlled_inference_ablation" ? "推理对照" : "训练配方");
   }
 
   function percentage(evaluation) {
@@ -183,6 +183,7 @@
     $("comparison-content").hidden = experiments.length === 0;
     $("comparison-notice").hidden = !experiments.some(isCheck);
     experiments.forEach((experiment, index) => {
+      const reused = experiment.kind === "controlled_inference_ablation";
       const training = experiment.training || {};
       const evaluation = experiment.evaluation || {};
       const row = element("tr");
@@ -196,8 +197,8 @@
       const rateCell = cell(rate === null ? "待评测" : `${number(rate)}%`,
         rate === null ? null : `${isNumber(evaluation.n_success) && isNumber(evaluation.n_episodes) ? `${count(evaluation.n_success)}/${count(evaluation.n_episodes)} 回合` : "回合数未记录"}${interval(evaluation) ? ` · 95% CI ${interval(evaluation)}` : ""}`,
         rate === null ? "cell-pending" : "cell-success");
-      row.append(method, cell(updates, "已记录 / 计划"), cell(params, ratio),
-        cell(isNumber(training.max_logged_allocated_gib) ? `${number(training.max_logged_allocated_gib, 2)} GiB` : "待记录", "最大已记录分配值"), cell(duration(training.wall_s)), rateCell);
+      row.append(method, cell(reused ? "沿用基线" : updates, reused ? "同一最终checkpoint" : "已记录 / 计划"), cell(params, ratio),
+        cell(reused ? "沿用基线" : isNumber(training.max_logged_allocated_gib) ? `${number(training.max_logged_allocated_gib, 2)} GiB` : "待记录", "训练日志分配值"), cell(reused ? "无需重训" : duration(training.wall_s)), rateCell);
       $("comparison-body").append(row);
       const chartRow = element("div", "chart-row");
       const track = element("div", rate === null ? "chart-track pending" : "chart-track");
@@ -217,15 +218,18 @@
   }
 
   function renderLatency(experiments) {
+    const hasSamplingComparison = experiments.some((experiment) => experiment.id === "sampling5_baseline");
     const rows = experiments.flatMap((experiment) => list(experiment.latency)
       .filter((measurement) => isNumber(measurement?.median_ms) || isNumber(measurement?.p95_ms))
+      .filter((measurement) => !(hasSamplingComparison && experiment.id === "phase1_baseline" && measurement.num_steps === 5))
       .map((measurement) => ({ ...measurement, experiment })));
     $("latency-panel").hidden = rows.length === 0;
     $("latency-chart").replaceChildren();
     const maximum = Math.max(1, ...rows.map((row) => isNumber(row.median_ms) ? row.median_ms : 0));
     rows.forEach((measurement) => {
       const row = element("div", "latency-row");
-      const label = `${text(measurement.experiment.label, measurement.experiment.id)} · ${isNumber(measurement.num_steps) ? `${measurement.num_steps}步采样` : "步数未记录"}`;
+      const family = text(measurement.experiment.label, measurement.experiment.id).replace(/\s*·\s*\d+步采样$/, "");
+      const label = `${family} · ${isNumber(measurement.num_steps) ? `${measurement.num_steps}步采样` : "步数未记录"}${measurement.experiment.id === "phase1_lora" && measurement.num_steps === 5 ? "（仅测速）" : ""}`;
       const track = element("div", "chart-track"); track.setAttribute("role", "img");
       track.setAttribute("aria-label", `${label}，推理中位数${number(measurement.median_ms)}毫秒，P95 ${number(measurement.p95_ms)}毫秒`);
       if (isNumber(measurement.median_ms)) { const bar = element("span", "chart-bar"); bar.style.width = `${clamp(measurement.median_ms / maximum * 100, 0, 100)}%`; track.append(bar); }
@@ -324,6 +328,63 @@
     });
   }
 
+  function renderTrainingCurve(data) {
+    const figure = $("training-curve");
+    const image = $("training-curve-image");
+    const src = safeURL(data.project?.training_curve_src);
+    figure.hidden = !src;
+    if (!src) { image.removeAttribute("src"); return; }
+    configureLink($("training-curve-original"), src);
+    $("training-curve-original").target = "_blank";
+    $("training-curve-original").rel = "noopener noreferrer";
+    image.onerror = () => { figure.hidden = true; };
+    image.src = src;
+  }
+
+  function renderFailureCases(data) {
+    const cases = list(data.failure_cases).filter((record) => record && typeof record === "object" && !Array.isArray(record));
+    $("failure-cases").hidden = cases.length === 0;
+    const container = $("failure-case-list");
+    container.replaceChildren();
+    cases.forEach((record) => {
+      const card = element("article", "failure-case");
+      const title = text(record.title, "失败回合记录");
+      const imageSrc = safeURL(record.image);
+      if (imageSrc) {
+        const imageLink = element("a", "failure-case-image");
+        configureLink(imageLink, imageSrc);
+        imageLink.target = "_blank"; imageLink.rel = "noopener noreferrer";
+        imageLink.setAttribute("aria-label", `${title}：在新窗口查看完整原图`);
+        const image = element("img");
+        image.src = imageSrc; image.alt = `${title}的回合画面`; image.loading = "lazy"; image.decoding = "async"; image.width = 1280; image.height = 640;
+        image.addEventListener("error", () => { imageLink.hidden = true; }, { once: true });
+        imageLink.append(image, element("span", "failure-image-hint", "查看原图 ↗"));
+        card.append(imageLink);
+      }
+      const content = element("div", "failure-case-content");
+      const metadata = element("p", "failure-case-meta");
+      const experiment = state.experiments.find((item) => item.id === record.experiment);
+      const labels = [text(experiment?.label, text(record.experiment, "实验方案待补充"))];
+      if (isNumber(record.task_id) || (typeof record.task_id === "string" && record.task_id.trim())) labels.push(`任务 ${record.task_id}`);
+      if (isNumber(record.episode_index) || (typeof record.episode_index === "string" && record.episode_index.trim())) labels.push(`回合 ${record.episode_index}`);
+      metadata.textContent = labels.join(" / ");
+      content.append(metadata, element("h4", "", title));
+      const notes = element("dl", "failure-case-notes");
+      [["observation", "观察"], ["hypothesis", "待验证假设"], ["next_test", "下一步"]].forEach(([key, label]) => {
+        const row = element("div", `case-note case-note-${key}`);
+        row.append(element("dt", "", label), element("dd", "", text(record[key], "待补充。")));
+        notes.append(row);
+      });
+      content.append(notes);
+      if (safeURL(record.video)) {
+        const videoLink = element("a", "text-link failure-case-video", "打开回合片段 ↗");
+        configureLink(videoLink, record.video); videoLink.target = "_blank"; videoLink.rel = "noopener noreferrer";
+        content.append(videoLink);
+      }
+      card.append(content); container.append(card);
+    });
+  }
+
   function renderFindings(data) {
     [["conclusions", "conclusions-list", "conclusions-empty"], ["limitations", "limitations-list", "limitations-empty"]].forEach(([key, targetId, emptyId]) => {
       const entries = list(data[key]).map((item) => typeof item === "string" ? item : item?.text || item?.conclusion || item?.label).filter((item) => typeof item === "string" && item.trim());
@@ -333,6 +394,7 @@
     const evidence = list(data.evidence).filter((item) => safeURL(item?.href));
     $("evidence-empty").hidden = evidence.length > 0;
     evidence.forEach((record) => { const link = element("a", "evidence-link"); configureLink(link, record.href); link.append(element("span", "", text(record.label, "实验原始记录")), element("span", "", "↗")); $("evidence-list").append(link); });
+    renderFailureCases(data);
   }
 
   async function loadResults() {
@@ -346,7 +408,7 @@
       state.data = data; state.experiments = list(data.experiments).filter((item) => item && typeof item === "object");
       state.videos = state.experiments.flatMap((experiment) => list(experiment.videos).filter((video) => safeURL(video?.src)).map((video) => ({ ...video, experiment })));
       $("load-error").hidden = true; $("raw-results").hidden = false;
-      renderHero(data); renderComparison(); prepareVideos(); renderProtocol(data); renderFindings(data);
+      renderHero(data); renderComparison(); prepareVideos(); renderProtocol(data); renderFindings(data); renderTrainingCurve(data);
     } catch (_) {
       $("load-error").textContent = state.data ? "暂时无法刷新记录，当前保留上次成功读取的结果。" : "暂时无法加载实验记录。请稍后刷新，或查看项目仓库。";
       $("load-error").hidden = false;

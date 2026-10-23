@@ -1,0 +1,7 @@
+{
+  "verified_commit": "8f1084e3132a39270c3a13ebe37270a43ece2a01",
+  "verification": "All asset file Git blob hashes match official pinned Git tree",
+  "asset_files": 585,
+  "archive_sha256": "12971510ca0a0f28ba5827fbac1121f687b3885667a9766406a2558d35f9b4a0",
+  "pinned_url": "https://codeload.github.com/Lifelong-Robot-Learning/LIBERO/tar.gz/8f1084e3132a39270c3a13ebe37270a43ece2a01"
+}

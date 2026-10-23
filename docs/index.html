@@ -58,6 +58,11 @@
         <details id="task-detail" class="task-detail"><summary>查看逐任务评测 <span aria-hidden="true">＋</span></summary><div id="task-results"></div></details>
       </div>
       <p id="comparison-notice" class="scope-notice" hidden>流程检查用于确认训练与评测链路可运行，不作为模型能力或方法优劣的结论。</p>
+      <figure id="training-curve" class="training-curve" hidden aria-labelledby="training-curve-title">
+        <div class="training-curve-heading"><h3 id="training-curve-title">训练损失记录</h3><a id="training-curve-original" class="text-link" hidden>查看原图 ↗</a></div>
+        <img id="training-curve-image" alt="由真实训练日志生成的训练损失曲线" loading="lazy" decoding="async">
+        <figcaption>训练 loss 不等于任务成功率；闭环表现以独立评测回合的结果为准。</figcaption>
+      </figure>
     </section>
 
     <section id="demos" class="demo-section" aria-labelledby="demos-title"><div class="container section">
@@ -75,6 +80,7 @@
     <section id="findings" class="findings-section" aria-labelledby="findings-title"><div class="container section">
       <div class="section-heading"><div><p class="eyebrow">04 / FINDINGS & EVIDENCE</p><h2 id="findings-title">结论需要证据，也需要范围</h2></div><button id="show-failures" type="button" class="button button-outline" disabled>查看失败回合 <span aria-hidden="true">↗</span></button></div>
       <div class="findings-grid"><div class="conclusions"><h3>当前观察</h3><ol id="conclusions-list"></ol><p id="conclusions-empty" class="subtle-empty">实验观察将在结果复核后补充。</p></div><aside class="limitations"><h3>适用范围与限制</h3><ul id="limitations-list"></ul><p id="limitations-empty" class="subtle-empty">范围说明待补充。</p></aside></div>
+      <div id="failure-cases" class="failure-cases" hidden aria-labelledby="failure-cases-title"><div class="failure-cases-heading"><h3 id="failure-cases-title">从失败回合提出可验证的问题</h3><p>区分画面中直接可见的观察与仍需实验验证的解释。点击画面可查看完整原图。</p></div><div id="failure-case-list" class="failure-case-list"></div></div>
       <div class="evidence-heading"><h3>回到原始记录</h3><a id="raw-results" class="text-link" href="data/results.json" download hidden>下载结果 JSON <span aria-hidden="true">↓</span></a></div><div id="evidence-list" class="evidence-list"></div><p id="evidence-empty" class="subtle-empty">可下载的实验记录待补充。</p>
     </div></section>
   </main>

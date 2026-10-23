@@ -19,6 +19,6 @@ for path in sorted((root / "patches").glob("*.patch")):
                     "sha256": hashlib.sha256(path.read_bytes()).hexdigest()})
 report = {"upstream_commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=repo, text=True).strip(),
           "patches": records,
-          "purpose": "Freeze completed SyncVectorEnv lanes so later LIBERO initial states are not skipped."}
+          "purpose": "Record evaluation compatibility fixes: freeze completed sync lanes, trace initial states, and retain all complete episode videos."}
 (root / "reports/upstream_patches.json").write_text(json.dumps(report, indent=2))
 print(json.dumps(report, indent=2))
